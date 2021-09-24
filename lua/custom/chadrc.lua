@@ -42,6 +42,7 @@ M.options = {
       end
     end,
 }
+
 M.plugins = {
   options = {
     --lspconfig = {
@@ -88,10 +89,5 @@ M.plugins = {
         '!python',
       },
     },
-    --["NvChad/extensions"] = {
-    --    commit = "785eaa25a9bbdf47a6808dc5b6da1747abe10b2b"
-    --},
   }
 }
-
-return M
