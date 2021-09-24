@@ -38,13 +38,42 @@ for _, plugin in pairs(enable_providers) do
   vim.g["loaded_" .. plugin] = nil
   vim.cmd("runtime " .. plugin)
 end
+
+M.mappings = {
+  general = {
+    n = {
+      ["<C-c>"] = { "", "" }, -- disables default
+    }
+  },
+  nvimtree = {
+    n = {
+      ["<C-n>"] = { "", ""},
+      ["<C-o>"] = { "<cmd> NvimTreeToggle <CR>", "toggle nvimtree" }
+    }
+  }
+
+}
 M.plugins = {
   ["windwp/nvim-autopairs"] = false, -- auto createes closing paren bracket quote etc
   ["lukas-reineke/indent-blankline.nvim"] = false, -- highlights blocks and provides vertical lines on indent
   ['ntpeters/vim-better-whitespace'] = {},
-  ["folke/which-key.nvim"] = { disable = false },
   ["nvim-treesitter/nvim-treesitter"] = {
-  }
+      auto_install = true,
+      highlight = {
+        enable = true,
+        use_languagetree = true,
+        disable = { "python" },
+      },
+    },
+
+  ["folke/which-key.nvim"] = { disable = false },
+  ['numirias/semshi'] = { ft = 'python', config = 'vim.cmd [[UpdateRemotePlugins]]'},
+  ["NvChad/nvim-colorizer.lua"] = {
+      filetypes = {
+        '*',
+        '!python',
+      },
+    },
 }
 
 return M
