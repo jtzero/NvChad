@@ -1,6 +1,8 @@
 plugin
-custom
 spell
-ftplugin
-coc-settings.json
-.luarc.json
+lua/custom/*
+!lua/custom/example_init.lua
+!lua/custom/example_chadrc.lua
+!lua/custom/chadrc.lua
+!lua/custom/init.lua
+!lua/custom/opts.lua
