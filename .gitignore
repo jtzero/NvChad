@@ -10,6 +10,3 @@ lua/custom/*
 !lua/custom/chadrc.lua
 !lua/custom/init.lua
 !lua/custom/opts.lua
-ftplugin
-coc-settings.json
-.luarc.json
