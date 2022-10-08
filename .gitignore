@@ -11,3 +11,4 @@ lua/custom/*
 !lua/custom/init.lua
 !lua/custom/opts.lua
 ftplugin
+coc-settings.json
