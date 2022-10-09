@@ -8,3 +8,4 @@ lua/custom/*
 !lua/custom/opts.lua
 ftplugin
 coc-settings.json
+.luarc.json
