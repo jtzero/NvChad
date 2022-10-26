@@ -1,4 +1,5 @@
 plugin
+custom
 spell
 lua/custom/*
 !lua/custom/example_init.lua
