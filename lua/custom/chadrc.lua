@@ -42,7 +42,6 @@ M.options = {
       end
     end,
 }
-
 M.plugins = {
   options = {
     --lspconfig = {
@@ -89,22 +88,10 @@ M.plugins = {
         '!python',
       },
     },
-  },
+    --["NvChad/extensions"] = {
+    --    commit = "785eaa25a9bbdf47a6808dc5b6da1747abe10b2b"
+    --},
+  }
 }
-
---M.setup_lsp = function(attach, capabilities)
-  --local lspconfig = require "lspconfig"
-  --lspservers with default config
---  local servers = { "html", "cssls", "pyright" }
---  for _, lsp in ipairs(servers) do
---    lspconfig[lsp].setup {
---      on_attach = attach,
---      capabilities = capabilities,
---      flags = {
---         debounce_text_changes = 150,
---      },
---    }
---  end
---end
 
 return M
