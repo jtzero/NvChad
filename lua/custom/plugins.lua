@@ -19,15 +19,25 @@ end
 
 
 local ssh_config_filepath = os.getenv("HOME") .. "/.ssh/config"
-local found = io.open(os.getenv("HOME") .. "/.ssh/config", "r"):read("*a"):find("-mine") -- if it finds it, it will return the index, if not it will return nil
-
-local url = "git@github.com:jtzero/go-to-test-file.git"
-if found then
-  url = "git@github.com-mine:jtzero/go-to-test-file.git"
-end
+local my_ssh_config_found = io.open(os.getenv("HOME") .. "/.ssh/config", "r"):read("*a"):find("-mine") -- if it finds it, it will return the index, if not it will return nil
 
 return {
-  { url, lazy = false, config = true },
+  {
+    'jtzero/go-to-test-file.nvim',
+    lazy = false,
+    config = true,
+    opts = {
+      print_main_command_result = true
+    },
+    keys = {
+      {
+        '<M-T>',
+        '<cmd>FindTestOrSourceCodeFileWithFallback<CR>',
+        mode = { "n" },
+        desc = 'Opens a corresponding test file or source file if not found opens the test folder',
+      },
+    },
+  },
   { "ntpeters/vim-better-whitespace" },
   -- ================ NVChad overrides
   { "lukas-reineke/indent-blankline.nvim", enabled = false }, -- highlights blocks and provides vertical lines on indent
@@ -45,6 +55,12 @@ return {
       -- completeopt= "menu,menuone,noinsert,noselect",
 
       return opts
+    end
+  },
+  {
+    "NvChad/ui",
+    config = function()
+      vim.opt.statusline=""
     end
   },
   {
@@ -139,7 +155,7 @@ return {
 		},
   },
   { "mikavilpas/yazi.nvim",
-    lazy = false,
+    lazy = true,
     dependencies = {
       "nvim-telescope/telescope.nvim",
       "nvim-lua/plenary.nvim",
@@ -154,6 +170,17 @@ return {
         end,
         desc = "Open the file manager in current folder of the file" ,
       },
+      {
+        "<leader>cw", "<cmd>Yazi cwd<cr>",
+        desc = "Open in the current working directory" ,
+      },
+      --{
+        -- NOTE: this requires a version of yazi that includes
+        -- https://github.com/sxyazi/yazi/pull/1305 from 2024-07-18
+        --'<c-up>',
+        --"<cmd>Yazi toggle<cr>",
+        --desc = "Resume the last yazi session",
+      --},
     },
     opts = {
       open_for_directories = true,
@@ -165,58 +192,6 @@ return {
   -- { "voldikss/vim-floaterm" }
   -- { "ptzz/lf.vim" }
   -- { "nvim-neo-tree/neo-tree.vim" }
-  --{
-  --  "kelly-lin/ranger.nvim",
-  --  --"jtzero/rnvimr",
-  --  dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
-  --  lazy = false,
-  --  config = function()
-  --    require("ranger-nvim").setup({
-  --      replace_netrw = true,
-  --      ui = {
-  --        border = "none",
-  --        height = 0.95,
-  --        width = 1,
-  --        x = 0.5,
-  --        y = 0.5
-  --      }
-  --    })
-  --    vim.api.nvim_set_keymap("n", "<M-o>", "", {
-  --      noremap = true,
-  --      callback = function()
-  --        require("ranger-nvim").open(true)
-  --      end,
-  --    })
-  --  end,
-  --},
-  --{
-  --  "kevinhwang91/rnvimr",
-  --  dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
-  --  lazy = true,
-  --  keys = {
-  --    { "<M-o>", "<cmd>RnvimrToggle<CR>", desc = "Ranger Dialog", noremap = true },
-  --    -- silent means dont show in console
-  --    -- <C-\><C-n> meaans break out of terminal mode
-  --    { "<M-o>", [[<C-\><C-n>:RnvimrToggle<CR>]], desc = "Ranger Dialog exit", noremap = true, mode = "t" },
-  --    { "<M-p>", [[<C-\><C-n>:RnvimrResize<CR>]], desc = "Ranger Dialog resize", noremap = true, mode = "t" }
-  --  },
-  --  init = function(_plugin)
-  --    -- border causes tearing
-  --    vim.g.rnvimr_draw_border = 0
-  --    --Make Ranger replace Netrw and be the file explorer
-  --    vim.g.rnvimr_enable_ex = 1
-  --    --Make Neovim wipe the buffers corresponding to the files deleted by Ranger
-  --    vim.g.rnvimr_enable_bw = 1
-  --    vim.g.rnvimr_layout = {
-  --          relative = 'editor',
-  --          width = vim.fn.float2nr(vim.fn.round(0.9 * vim.api.nvim_eval("&columns"))),
-  --          height = vim.fn.float2nr(vim.fn.round(0.7 * vim.api.nvim_eval("&lines"))),
-  --          col = vim.fn.float2nr(vim.fn.round(0.05 * vim.api.nvim_eval("&columns"))),
-  --          row = vim.fn.float2nr(vim.fn.round(0.15 * vim.api.nvim_eval("&lines"))),
-  --          style = 'minimal'
-  --      }
-  --  end
-  --},
 --  {
 --    "rafaqz/ranger.vim",
 --    lazy = false,
@@ -265,6 +240,7 @@ return {
     -- https://github.com/f-person/auto-dark-mode.nvim
     -- https://github.com/nvim-lualine/lualine.nvim/blob/master/THEMES.md
     -- TODO change terminal theme
+    -- https://github.com/neanias/everforest-nvim -- has a lualine theme
     opts = function(_plugin)
       local theme = os.getenv("THEME")
       if theme == "auto" then
@@ -295,12 +271,6 @@ return {
     end
   },
   -- ================= Language
-  -- https://github.com/dense-analysis/ale/issues/4497
-  --{
-  --  "Shopify/ruby-lsp",
-  --  lazy = true,
-  --  ft = 'ruby'
-  --},
   {
     "wookayin/semshi",
     lazy = true,
@@ -310,23 +280,33 @@ return {
       vim.g["semshi#always_update_all_highlights"] = 1
     end
   },
+  -- https://github.com/dense-analysis/ale/issues/4497
+  --{
+  --  "Shopify/ruby-lsp",
+  --  lazy = true,
+  --  ft = 'ruby'
+  --},
   {
     "dense-analysis/ale",
     --version = ">=3.3.0",
-    commit = "50e237f", -- ale starts usingf the builtin neovim dagnostics that
+    --commit = "50e237f", -- ale starts usingf the builtin neovim dagnostics that
                         -- nvchad uses (lua/nvchad/lsp.lua) in this commit
+                        -- actually its controlled lower
     lazy = false,
-    keys = {"<C-L>", "<Plug>(ale_fix)", desc = "Runs the fixers in ale", noremap = true},
+    keys = {
+      {"<C-L>", "<Plug>(ale_fix)", desc = "Runs the fixers in ale", noremap = true},
+      --{"<C-L>", "<cmd>ALEFix<CR>", desc = "Runs the fixers in ale", noremap = true},
+      {"<M-B>", "<cmd>ALEGoToDefinition<CR>", desc = "Finds the definition", noremap = true},
+    },
     config = function(_plugins)
       vim.g["airline#extensions#ale#enabled"] = 1
       --By default, all available tools for all supported languages will be run.
+      vim.g["ale_use_neovim_diagnostics_api"] = 1
+      vim.g["ale_fix_on_save"] = 1
 
-      vim.g["ale_linters"] = {
-        --["*"] = {"remove_trailing_lines", "trim_whitespace"},
-        proto = {'buf-lint'},
-        --javascript = {'eslint'},
-      }
-      --vim.g["ale_lint_on_text_changed"] = 'never'
+      vim.g["ale_typescript_tslint_use_global"] = 0
+      vim.g["ale_lua_luacheck_options"] = '--ignore 21/_.*'
+
 
       vim.g["ale_python_pylint_change_directory"] = 1
       vim.g["ale_python_mypy_change_directory"] = 1
@@ -335,13 +315,6 @@ return {
       --vim["g.ale_python_mypy_use_global"] = 1
       vim.g["ale_python_auto_pipenv"] = 1
       vim.g["ale_python_auto_poetry"] = 1
-      vim.g["ale_ruby_syntax_tree_options"] = "--print-width=100"
-      vim.g["ale_typescript_tslint_use_global"] = 0
-      vim.g["ale_lua_luacheck_options"] = '--ignore 21/_.*'
-
-      vim.g["ale_fix_on_save"] = 1
-      vim.g["ale_use_neovim_diagnostics_api"] = 1
-
       local path = vim.fn.trim(vim.fn.system("poetry env info --path"))
       if(path == "" or path == ".")
       then
@@ -349,12 +322,35 @@ return {
         vim.fn.system('poetry env use ' .. version)
         path = vim.fn.trim(vim.fn.system('poetry env info --path'))
       end
+
       vim.fn.setenv("VIRTUAL_ENV", path)
       vim.g["ale_python_pyright_config"] = {
         venvPath = vim.fn.trim(vim.fn.system('poetry config virtualenvs.path')),
         venv = vim.fs.basename(path)
       }
 
+      vim.g["ale_ruby_syntax_tree_options"] = "--print-width=100"
+      vim.g["ale_ruby_rubocop_auto_correct_all"] = 0
+      local rubocop_path = vim.fn.trim(vim.fn.system("bundle show rubocop"))
+
+      if(rubocop_path ~= "")
+      then
+        vim.g["ale_ruby_rubocop_executable"] = 'bundle'
+      end
+
+      local rails_path = vim.fn.trim(vim.fn.system("bundle show rails"))
+
+      if(rails_path ~= "")
+      then
+        vim.g["ale_ruby_debride_options"] = '--rails'
+      end
+
+
+
+      vim.g["ale_linters"] = {
+        proto = {'buf-lint'},
+        --javascript = {'eslint'},
+      }
       -- the asterisk is the default case
       -- It works even if not explicitly added to a language
       vim.g["ale_fixers"] = {
@@ -438,6 +434,34 @@ return {
     end,
   },
   -- ================
+  -- After installation and configuration, you will need to authenticate with Codeium.
+  -- This can be done by running :Codeium Auth, copying the token from your browser
+  -- and pasting it into API token request.
+  -- ctrl [ to loop through the suggestions
+  {
+    "Exafunction/codeium.nvim",
+    dependencies = {
+        "nvim-lua/plenary.nvim",
+        "hrsh7th/nvim-cmp",
+    },
+    config = function()
+        require("codeium").setup({
+        })
+    end
+  },
+  -- can chat with ollama
+  -- https://github.com/Robitx/gp.nvim
+  -- {
+  --  "robitx/gp.nvim",
+  --  config = function()
+  --      local conf = {
+            -- For customization, refer to Install > Configuration in the Documentation/Readme
+  --      }
+  --      require("gp").setup(conf)
+
+        -- Setup shortcuts here (see Usage > Shortcuts in the Documentation/Readme)
+  --  end,
+  --}
   {
     'git@gitlab.com:gitlab-org/editor-extensions/gitlab.vim.git',
     enabled = false,

@@ -6,19 +6,20 @@ M.ui = {
   italic_comments = false,
 
   -- theme to be used, to see all available themes, open the theme switcher by <leader> + th
-  --theme = "onedark",
+  -- telescope themes current theme is saved here
   theme = "chadracula",
+  -- not sure this is needed anymore
   -- theme toggler, toggle between two themes, see theme_toggleer mappings
   theme_toggler = {
      enabled = false,
      fav_themes = {
-        "onedark",
-        "gruvchad",
+        "chadracula",
+        "gruvchad"
      },
   },
 
   -- Enable this only if your terminal has the colorscheme set which nvchad uses
-  -- For Ex : if you have onedark set in nvchad , set onedark's bg color on your terminal
+  -- For Ex : if you have chadracula set in nvchad , set chadracula's bg color on your terminal
   transparency = false,
   --statusline = {
   --  theme = "override",
